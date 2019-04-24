@@ -33,7 +33,7 @@ for item in contacts_list[1:]:
 
 for item in contacts_list_clean:
     
-    phone_pattern = '(\+7|8){1}(\s*)(\(?)(\d{3})(\)?)(\s*)(\-*)(\d{3})(-*)(\d{2})(-*)(\d{2})(\s*)(\(?)(\s?(доб)?)(\.?)(\s*)(\d*)(\)?)'
+    phone_pattern = '(\+7|8)(\s*)(\(?)(\d{3})(\)?)(\s*)(\-*)(\d{3})(-*)(\d{2})(-*)(\d{2})(\s*)(\(?)(\s?(доб)?)(\.?)(\s*)(\d*)(\)?)'
     find_phone = re.findall(phone_pattern, item[5])
     clean_phone = re.sub(phone_pattern, r'+7(\4)\8-\10-\12\13\15\17\19', item[5])
 
