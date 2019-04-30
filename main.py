@@ -6,8 +6,7 @@ with open("phonebook_raw.csv") as f:
     rows = csv.reader(f, delimiter=",")
     contacts_list = list(rows)
 
-# TODO 1: выполните пункты 1-3 ДЗ
-
+# Задание 1: распределяем фамилию, имя и отчество по отдельным полям
 header = contacts_list[0]
 contacts_list_clean = [header]
 
@@ -31,6 +30,7 @@ for item in contacts_list[1:]:
         contacts_list_clean.append(full_raw)
 
 
+# Задание 2: приводим все телефоны к формату +7(999)999-99-99 или +7(999)999-99-99 доб.9999
 for item in contacts_list_clean:
     
     phone_pattern = '(\+7|8)(\s*)(\(?)(\d{3})(\)?)(\s*)(\-*)(\d{3})(-*)(\d{2})(-*)(\d{2})(\s*)(\(?)(\s?(доб)?)(\.?)(\s*)(\d*)(\)?)'
@@ -40,8 +40,48 @@ for item in contacts_list_clean:
     item[5] = clean_phone
 
 
-# TODO 2: сохраните получившиеся данные в другой файл
-# код для записи файла в формате CSV
+# Задание 3: объединяем все дублирующиеся записи о человеке в одну
+contacts_list_clean_search = contacts_list_clean.copy()
+
+# добавляем новое поле для полного ФИО — по нему будем ускать дублирующие записи
+contacts_list_clean_search[0].append('search_name_field')
+
+i = 1
+for item in contacts_list_clean_search[i:]:
+    search_name = ' '.join(item[0:3]).strip()
+    contacts_list_clean_search[i].append(search_name)
+    i += 1
+
+
+contacts_list_clean_no_dub = [header]
+
+j = 0
+for item in contacts_list_clean_search[1:]:
+    j += 1
+    k = 0
+    for another_item in contacts_list_clean_no_dub:
+
+        # добавляем в новый список уникальные записи
+        if contacts_list_clean_search[j][-1] not in contacts_list_clean_no_dub[k][-1]:
+            k += 1
+            if k == len(contacts_list_clean_no_dub):
+                contacts_list_clean_no_dub.append(item)
+                break
+
+        # объединяем неуникальные записи
+        else:
+            for index, yet_another_item in enumerate(another_item[0:7]):
+                if yet_another_item == '' and contacts_list_clean_search[j][index] != '':
+                    another_item[index] = contacts_list_clean_search[j][index]
+            break
+
+# удаляем уже ненужное поле search_name_field
+for item in contacts_list_clean_no_dub:
+    del item[7]
+
+pprint(contacts_list_clean_no_dub)
+
+
 with open("phonebook.csv", "w") as f:
     datawriter = csv.writer(f, delimiter=',')
-    datawriter.writerows(contacts_list_clean)
+    datawriter.writerows(contacts_list_clean_no_dub)
